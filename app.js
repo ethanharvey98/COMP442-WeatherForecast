@@ -26,7 +26,38 @@ function success(pos) {
     var data = JSON.parse(this.response);
     console.log(data);
     // Populate Data
-    $("#forecast").after(JSON.stringify(data));
+
+    //$("#forecast").after(JSON.stringify(data));
+    var row;
+
+    for (var i = 0; i < 10; i++) {
+
+      var col = document.createElement('div');
+      col.setAttribute('class', 'col-sm-6 col-12');
+      var header = document.createElement('h3');
+      var status = document.createElement('h6');
+      var temp = document.createElement('h6');
+      col.append(header);
+      col.append(status);
+      col.append(temp);
+      header.innerHTML = data.time.startPeriodName[i];
+      status.innerHTML = data.data.weather[i];
+      temp.innerHTML = data.data.temperature[i];
+
+      var img = document.createElement('img');
+      img.src = data.data.iconLink[i];
+      col.append(img);
+
+      if (i%2 === 0) {
+        row = document.createElement('div');
+        row.setAttribute('class', 'row');
+        row.append(col);
+      } else {
+        row.append(col);
+        $("#forecast").append(row);
+      }
+    }
+
   }
   request.send();
     
