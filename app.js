@@ -7,6 +7,9 @@ var options = {
 };
 
 function success(pos) {
+  // Variable dictionary
+  var row, col, box;
+
   var crd = pos.coords;
 
   console.log('Your current position is:');
@@ -25,39 +28,70 @@ function success(pos) {
   request.onload = function() {
     var data = JSON.parse(this.response);
     console.log(data);
-    // Populate Data
+    
+    // Populate Page
+    row = document.createElement('div');
+    row.setAttribute('class', 'row no-gutters');
 
-    //$("#forecast").after(JSON.stringify(data));
-    var row;
-
-    for (var i = 0; i < 10; i++) {
-
-      var col = document.createElement('div');
+    if (data.time.startValidTime[0].substring(0,10) === data.time.startValidTime[1].substring(0,10)) {
+      col = document.createElement('div');
       col.setAttribute('class', 'col-sm-6 col-12');
+      row.append(col);
+    }
+
+    for (var i = 0; i < data.data.iconLink.length; i++) {
+
+      // Define col
+      col = document.createElement('div');
+      col.setAttribute('class', 'col-sm-6 col-12');
+
+      // Define box
+      box = document.createElement('div');
+      box.setAttribute('class', 'basicbox');
+
+      // Append box to col
+      col.append(box);
+
+      // Define header, status, and temp
       var header = document.createElement('h3');
       var status = document.createElement('h6');
       var temp = document.createElement('h6');
-      col.append(header);
-      col.append(status);
-      col.append(temp);
+
+      // Append header, status, and temp to box
+      box.append(header);
+      box.append(temp);
+      box.append(status);
+
+      // Fill header, status, and temp
       header.innerHTML = data.time.startPeriodName[i];
+      temp.innerHTML = data.data.temperature[i] + " degrees Fahrenheit";
       status.innerHTML = data.data.weather[i];
-      temp.innerHTML = data.data.temperature[i];
 
+
+      // Define img
       var img = document.createElement('img');
-      img.src = data.data.iconLink[i];
-      col.append(img);
 
-      if (i%2 === 0) {
-        row = document.createElement('div');
-        row.setAttribute('class', 'row');
-        row.append(col);
-      } else {
-        row.append(col);
-        $("#forecast").append(row);
+      // Append img to box
+      box.append(img);
+
+      // Fill img
+      img.src = data.data.iconLink[i];
+
+      // If there is another forecast
+      if (data.time.startValidTime[i+1]) {
+        // If the next forecast is the next day
+        if (data.time.startValidTime[i].substring(0,10) === data.time.startValidTime[i+1].substring(0,10)) {
+          row = document.createElement('div');
+          row.setAttribute('class', 'row no-gutters');
+          row.append(col);
+        }
+        // If the forecast is the same day
+        else {
+          row.append(col);
+          $("#forecast").append(row);
+        }
       }
     }
-
   }
   request.send();
     
