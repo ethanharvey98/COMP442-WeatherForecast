@@ -10,13 +10,9 @@ function success(pos) {
   // Variable dictionary
   var row, col, box;
 
+  // Coordinates
   var crd = pos.coords;
 
-  console.log('Your current position is:');
-  console.log(`Latitude : ${crd.latitude}`);
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-    
   // Variables for GET request
   api_url = "http://forecast.weather.gov/MapClick.php";
   lat = crd.latitude;
@@ -33,7 +29,8 @@ function success(pos) {
     row = document.createElement('div');
     row.setAttribute('class', 'row no-gutters');
 
-    if (data.time.startValidTime[0].substring(0,10) === data.time.startValidTime[1].substring(0,10)) {
+    // Create empty col if only one forecast is sent for today 
+    if (data.time.startValidTime[0].substring(0,10) !== data.time.startValidTime[1].substring(0,10)) {
       col = document.createElement('div');
       col.setAttribute('class', 'col-sm-6 col-12');
       row.append(col);
@@ -67,7 +64,6 @@ function success(pos) {
       temp.innerHTML = data.data.temperature[i] + " degrees Fahrenheit";
       status.innerHTML = data.data.weather[i];
 
-
       // Define img
       var img = document.createElement('img');
 
@@ -90,6 +86,10 @@ function success(pos) {
           row.append(col);
           $("#forecast").append(row);
         }
+      }
+      else {
+        row.append(col);
+        $("#forecast").append(row);
       }
     }
   }
